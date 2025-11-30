@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSense | Intelligent Soil Analytics Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Animations */
+        .fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #047857; }
+
+        /* Loader */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #059669;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200">
+                        <i class="ph-fill ph-plant text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 tracking-tight">AgroSense<span class="text-green-600">.ai</span></h1>
+                        <p class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Pro Analytics</p>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                    <a href="#dashboard" class="hover:text-green-600 transition-colors">Live Dashboard</a>
+                    <a href="#features" class="hover:text-green-600 transition-colors">Features</a>
+                    <a href="#testimonials" class="hover:text-green-600 transition-colors">Success Stories</a>
+                    
+                    <div id="nav-auth-container">
+                        <button onclick="openLoginModal()" class="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2">
+                            <i class="ph-bold ph-user"></i>
+                            <span>Login / Portal</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1625246333195-58197bd47d26?q=80&w=2071&auto=format&fit=crop" alt="Smart Farming" class="w-full h-full object-cover opacity-10">
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-slate-50/50 to-slate-50"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
+            <span class="bg-green-100 text-green-700 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6 inline-block fade-in-up">
+                <i class="ph-fill ph-check-circle inline mr-1"></i> System Operational
+            </span>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight fade-in-up delay-100">
+                Precision Agriculture <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-400">Powered by Intelligence</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 fade-in-up delay-200">
+                Monitor soil health in real-time, get AI-driven treatment plans, and maximize crop yield with the world's most advanced IoT sensor network.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in-up delay-300">
+                <a href="#dashboard" class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl shadow-green-200 transition-all hover:scale-105 flex items-center justify-center gap-2">
+                    View Live Demo
+                    <i class="ph-bold ph-arrow-right"></i>
+                </a>
+                <button onclick="openLoginModal()" class="bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 px-8 py-4 rounded-full font-bold text-lg shadow-sm transition-all hover:border-slate-300">
+                    Connect Device
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="dashboard" class="py-12 bg-white border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-4">
+            
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Live Field Analysis</h2>
+                    <p class="text-slate-500 mt-1">Sensor ID: <span class="font-mono text-green-600 bg-green-50 px-2 py-0.5 rounded">AG-X1-4092</span> • Location: Sector 4B</p>
+                </div>
+                <div class="hidden md:flex items-center gap-2 text-sm">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span class="font-semibold text-green-700">Live Data Syncing</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <div class="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-2 h-full bg-yellow-400"></div> <div class="text-center sm:text-left z-10">
+                            <h3 class="text-lg font-bold text-slate-500 uppercase tracking-wide">Overall Soil Health</h3>
+                            <div class="text-5xl font-extrabold text-slate-900 mt-2">65<span class="text-2xl text-slate-400">/100</span></div>
+                            <div class="mt-2 inline-flex items-center gap-1.5 bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full">
+                                <i class="ph-fill ph-warning"></i> Attention Required
+                            </div>
+                            <p class="text-sm text-slate-500 mt-4 max-w-sm">
+                                Soil moisture is optimal, but nutrient density shows a critical imbalance in Phosphorus levels.
+                            </p>
+                        </div>
+
+                        <div class="relative h-40 w-40 flex-shrink-0">
+                            <svg class="h-full w-full transform -rotate-90">
+                                <circle cx="80" cy="80" r="70" stroke="#f1f5f9" stroke-width="12" fill="none"></circle>
+                                <circle cx="80" cy="80" r="70" stroke="#fbbf24" stroke-width="12" fill="none" stroke-dasharray="440" stroke-dashoffset="150" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="ph-duotone ph-plant text-4xl text-yellow-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                    <span class="font-bold">N</span>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400">NITROGEN</span>
+                            </div>
+                            <div class="text-2xl font-bold text-slate-900">55 <span class="text-xs font-normal text-slate-500">ppm</span></div>
+                            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-3">
+                                <div class="bg-green-500 h-1.5 rounded-full" style="width: 70%"></div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Within healthy range</p>
+                        </div>
+
+                        <div class="bg-red-50 p-6 rounded-2xl border border-red-100 relative overflow-hidden group">
+                            <div class="absolute -right-4 -top-4 text-red-100 opacity-50 group-hover:scale-110 transition-transform">
+                                <i class="ph-fill ph-warning-octagon text-8xl"></i>
+                            </div>
+                            <div class="flex justify-between items-start mb-4 relative z-10">
+                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                    <span class="font-bold">P</span>
+                                </div>
+                                <span class="text-xs font-bold text-red-400">PHOSPHORUS</span>
+                            </div>
+                            <div class="text-2xl font-bold text-slate-900 relative z-10">12 <span class="text-xs font-normal text-slate-500">ppm</span></div>
+                            <div class="w-full bg-red-200 h-1.5 rounded-full mt-3 relative z-10">
+                                <div class="bg-red-500 h-1.5 rounded-full" style="width: 20%"></div>
+                            </div>
+                            <p class="text-xs text-red-600 font-bold mt-2 relative z-10">CRITICAL LOW</p>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <span class="font-bold">K</span>
+                                </div>
+                                <span class="text-xs font-bold text-slate-400">POTASSIUM</span>
+                            </div>
+                            <div class="text-2xl font-bold text-slate-900">150 <span class="text-xs font-normal text-slate-500">ppm</span></div>
+                            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-3">
+                                <div class="bg-blue-500 h-1.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Optimal range</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1 bg-slate-900 rounded-3xl p-6 flex flex-col text-white shadow-2xl relative overflow-hidden h-[500px]">
+                    <div class="flex items-center gap-3 border-b border-white/10 pb-4 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
+                            <i class="ph-fill ph-robot text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">Agro Genius AI</h3>
+                            <p class="text-xs text-green-400">Analysis Active</p>
+                        </div>
+                    </div>
+
+                    <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 no-scrollbar pr-2">
+                        <div class="flex gap-3">
+                            <div class="bg-white/10 p-3 rounded-2xl rounded-tl-none text-sm text-slate-200 leading-relaxed">
+                                System alert: I've analyzed the latest sensor reading. The low Phosphorus levels (12ppm) will stunt root growth if not treated.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="typing-indicator" class="hidden mb-2">
+                         <div class="flex gap-1 bg-white/5 w-fit p-2 rounded-lg">
+                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                        </div>
+                    </div>
+
+                    <form id="chat-form" class="mt-4 relative">
+                        <input type="text" id="user-input" placeholder="Ask for a solution..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 focus:bg-white/10 transition-all pr-12">
+                        <button type="submit" class="absolute right-2 top-2 p-1.5 bg-green-500 rounded-lg hover:bg-green-400 text-white transition-colors">
+                            <i class="ph-bold ph-paper-plane-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="testimonials" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900">Trusted by Modern Farmers</h2>
+                <p class="text-slate-500 mt-4">Over 5,000 hectares monitored globally.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:-translate-y-1 transition-transform duration-300">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4">
+                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"The AI detection saved my corn harvest. It spotted a nitrogen deficiency two weeks before visual symptoms appeared."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-bold text-slate-900">David Miller</h4>
+                            <p class="text-xs text-slate-500">Miller Farms, Ohio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:-translate-y-1 transition-transform duration-300">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4">
+                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"Simply the best interface I've used. I can check soil stats from my phone while I'm at the market."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-bold text-slate-900">Sarah Chen</h4>
+                            <p class="text-xs text-slate-500">Green Valley Orchard</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:-translate-y-1 transition-transform duration-300">
+                    <div class="flex items-center gap-1 text-yellow-400 mb-4">
+                        <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"Deployment was incredibly easy. The AgroSensor X1 connected instantly and the data is spot on."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-bold text-slate-900">Marcus Johnson</h4>
+                            <p class="text-xs text-slate-500">AgriTech Solutions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 text-white mb-4">
+                    <i class="ph-fill ph-plant text-2xl text-green-500"></i>
+                    <span class="text-xl font-bold">AgroSense</span>
+                </div>
+                <p class="text-sm max-w-xs">Empowering farmers with data-driven insights for a sustainable future.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Platform</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-green-500">Dashboard</a></li>
+                    <li><a href="#" class="hover:text-green-500">Hardware</a></li>
+                    <li><a href="#" class="hover:text-green-500">API Access</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Legal</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-green-500">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-green-500">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-xs text-center">
+            &copy; 2023 AgroSense Analytics Inc. All rights reserved.
+        </div>
+    </footer>
+
+    <div id="login-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeLoginModal()"></div>
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl scale-95 opacity-0 transition-all duration-300 transform" id="login-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-900">Welcome Back</h2>
+                <button onclick="closeLoginModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Email Address</label>
+                    <input type="email" required placeholder="name@farm.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-green-500 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Password</label>
+                    <input type="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-green-500 transition-colors">
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-slate-300 text-green-600 focus:ring-green-500">
+                        Remember me
+                    </label>
+                    <a href="#" class="hover:text-green-600">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" id="login-btn" class="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl hover:bg-green-700 transition-all flex justify-center items-center gap-2">
+                    <span>Sign In to Dashboard</span>
+                </button>
+            </form>
+            
+            <p class="text-center text-xs text-slate-400 mt-6">
+                Don't have an account? <a href="#" class="text-green-600 font-bold hover:underline">Request Demo</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-24 right-4 bg-white border-l-4 border-green-500 shadow-xl p-4 rounded-lg transform translate-x-full transition-transform duration-300 z-[110] flex items-center gap-3">
+        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+            <i class="ph-fill ph-check"></i>
+        </div>
+        <div>
+            <h4 class="font-bold text-sm text-slate-900">Success</h4>
+            <p class="text-xs text-slate-500" id="toast-msg">Operation completed successfully.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- CHAT LOGIC ---
+        const chatForm = document.getElementById('chat-form');
+        const chatBox = document.getElementById('chat-messages');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('user-input');
+            const val = input.value.trim();
+            if(!val) return;
+
+            // User Msg
+            chatBox.innerHTML += `
+                <div class="flex justify-end gap-3 animation-fade-in">
+                    <div class="bg-green-600 text-white p-3 rounded-2xl rounded-tr-none text-sm max-w-[85%]">
+                        ${val}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Fake Thinking
+            typingIndicator.classList.remove('hidden');
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setTimeout(() => {
+                typingIndicator.classList.add('hidden');
+                // Bot Response
+                chatBox.innerHTML += `
+                    <div class="flex gap-3 animation-fade-in">
+                        <div class="bg-white/10 p-3 rounded-2xl rounded-tl-none text-sm text-slate-200 max-w-[90%]">
+                            <p class="mb-2">Based on the NPK readings, I recommend applying <strong>15kg/ha of Superphosphate</strong>.</p>
+                            <button class="bg-green-500/20 text-green-400 text-xs px-3 py-1.5 rounded-lg border border-green-500/50 hover:bg-green-500/30 transition-colors">Order Fertilizer</button>
+                        </div>
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1200);
+        });
+
+        // --- LOGIN LOGIC ---
+        const modal = document.getElementById('login-modal');
+        const modalContent = document.getElementById('login-content');
+
+        function openLoginModal() {
+            modal.classList.remove('hidden');
+            // Small timeout to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLoginModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const originalContent = btn.innerHTML;
+            
+            // Loading State
+            btn.innerHTML = `<div class="loader"></div>`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Success State
+                showToast("Login Successful! Redirecting...");
+                
+                // Update Navbar User
+                const navContainer = document.getElementById('nav-auth-container');
+                navContainer.innerHTML = `
+                    <div class="flex items-center gap-3 pl-4 border-l border-slate-300">
+                        <div class="text-right hidden lg:block">
+                            <p class="text-xs font-bold text-slate-900">John Farmer</p>
+                            <p class="text-[10px] text-slate-500">Premium Plan</p>
+                        </div>
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-10 h-10 rounded-full border-2 border-white shadow-md cursor-pointer hover:scale-105 transition-transform">
+                    </div>
+                `;
+
+                closeLoginModal();
+                
+                // Reset form button (invisible to user now but good practice)
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        // --- TOAST NOTIFICATION ---
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
